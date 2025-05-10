@@ -1,0 +1,8 @@
+.DeleteFrom {
+  margin: 0;
+  padding: 10px;
+}
+
+.IfNotAdded {
+  color: rgb(160, 160, 160);
+}
