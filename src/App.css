@@ -31,3 +31,35 @@ body {
   scrollbar-gutter: stable;
   background-color: #121212;
 }
+
+body.light {
+  transition: 0.3s;
+  background-color: white;
+  color: #121212;
+
+  a {
+    color: black;
+  }
+
+  label {
+    color: black;
+  }
+
+  h3 {
+    color: white;
+  }
+
+  h1 {
+    color: black;
+  }
+
+  h2 {
+    color: black;
+  }
+}
+
+body.dark {
+  transition: 0.3s;
+  background-color: #121212;
+  color: rgba(255, 255, 255, 0.562);
+}

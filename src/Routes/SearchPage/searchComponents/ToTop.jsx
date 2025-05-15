@@ -18,7 +18,7 @@ export const ToTop = () => {
 
         setTimeout(() => {
           setShow(false);
-        }, 301);
+        }, 300);
       }
     };
 

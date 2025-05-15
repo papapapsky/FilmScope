@@ -19,7 +19,6 @@
   }
   to {
     opacity: 0;
-    display: none;
   }
 }
 
@@ -176,10 +175,6 @@ h2 {
   border: 2px solid #9b59b6;
   background-color: #24242491;
   margin: 50px;
-}
-
-.MoviePoster:first-child {
-  margin-top: 0;
 }
 
 .MoviePoster:hover {
