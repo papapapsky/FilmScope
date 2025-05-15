@@ -4,17 +4,23 @@ import { useForm } from "react-hook-form";
 import { FetchToMovies } from "../../Fetch/fetchToMovies";
 import { MoviesFilter } from "./searchComponents/MovieFilter";
 import { MovieRender } from "../MovieRender";
-import { MovieOptions } from "./searchComponents/MovieOptions";
 import { useInput } from "./searchComponents/useInput";
 import { ToTop } from "./searchComponents/ToTop";
+import { GenreTags } from "./searchComponents/GenreTags";
+import { FilterPanel } from "./searchComponents/FilterPanel";
+import { SearchForm } from "./searchComponents/SearchForm";
+import { PageNavigator } from "./PageNavigator";
 
 export const SearchPage = () => {
   const ApiKey = process.env.REACT_APP_OMDB_API_KEY;
   const inputYear = useInput();
 
   const [movies, setMovies] = useState([]);
+  const [filteredMovies, setFilteredMovies] = useState([]);
   const [error, setError] = useState(false);
   const [typeFilter, setTypeFilter] = useState("all");
+  const [genres, setGenres] = useState([]);
+
   const [page, setPage] = useState(1);
   const [animation, setAnimation] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,16 +45,20 @@ export const SearchPage = () => {
   const fetchMovies = (name, pageNum = 1) => {
     if (!name) return;
 
-    const url = `http://www.omdbapi.com/?apikey=${ApiKey}&page=${pageNum}&s=${name}`;
+    const url = `http://www.omdbapi.com/?apikey=${ApiKey}&page=${pageNum}&s=${encodeURIComponent(
+      name
+    )}`;
     setLoading(true);
     setError(false);
     setMovies([]);
 
     FetchToMovies(url).then((movie) => {
-      if (movie.Search) {
+      setAnimation("AnimationsShow");
+      if (movie && movie.Search) {
         setMovies(movie.Search);
       } else {
         setError(true);
+        setMovies([]);
       }
       setLoading(false);
     });
@@ -67,63 +77,78 @@ export const SearchPage = () => {
     setTypeFilter(e.target.value);
   };
 
-  const filteredMovies = movies
-    .filter((item) => MoviesFilter(item, typeFilter))
-    .filter((item) => item.Year === inputYear.value || !inputYear.value);
+  const handleGenreAdd = (event) => {
+    if (!genres.includes(event.target.value)) {
+      setGenres([...genres, event.target.value]);
+    }
+  };
+
+  const handleGenreRemove = (event) => {
+    setGenres(genres.filter((item) => item !== event.target.value));
+  };
+
+  const fetchFullDetails = async (imdbID) => {
+    const url = `http://www.omdbapi.com/?apikey=${ApiKey}&i=${imdbID}`;
+    return await FetchToMovies(url);
+  };
+
+  useEffect(() => {
+    const applyFiltersAsync = async () => {
+      let filteredList = movies;
+
+      filteredList = filteredList.filter((item) =>
+        MoviesFilter(item, typeFilter)
+      );
+
+      if (inputYear.value) {
+        filteredList = filteredList.filter(
+          (item) => item.Year === inputYear.value
+        );
+      }
+
+      if (genres.length > 0 && filteredList.length > 0) {
+        setAnimation("");
+        const fullDetailsPromises = filteredList.map((movie) =>
+          fetchFullDetails(movie.imdbID)
+        );
+        const fullDetailsArray = await Promise.all(fullDetailsPromises);
+
+        filteredList = fullDetailsArray.filter((data) => {
+          if (!data.Genre) {
+            return false;
+          }
+          return genres.every((genre) => {
+            setAnimation("AnimationsShow");
+            const movieGenres = data.Genre.split(", ").map((g) => g.trim());
+
+            return movieGenres.includes(genre);
+          });
+        });
+      }
+      setFilteredMovies(filteredList);
+    };
+
+    applyFiltersAsync();
+  }, [movies, genres, typeFilter, inputYear.value]);
 
   return (
     <>
       <ToTop />
       <div className="SearchPage">
         <form className="SearchBlock" onSubmit={handleSubmit(onSubmit)}>
-          <div className="Filters">
-            <div className="FilterDiv">
-              <div className="FilterBlock">
-                <label htmlFor="Type">Выберите тип</label>
-                <select name="Type" onChange={handleTypeChange}>
-                  <MovieOptions />
-                </select>
-              </div>
-              <div className="FilterBlock">
-                <label htmlFor="Year">Год</label>
-                <input
-                  type="text"
-                  {...inputYear}
-                  name="Year"
-                  className="YearFilter"
-                />
-              </div>
-            </div>
-          </div>
-
-          <h1>Найти фильм</h1>
-          <input
-            type="text"
-            {...register("Movie", { required: true })}
-            placeholder="Введите название фильма"
+          <GenreTags genres={genres} handleGenreRemove={handleGenreRemove} />
+          <FilterPanel
+            inputYear={inputYear}
+            handleTypeChange={handleTypeChange}
+            handleGenreAdd={handleGenreAdd}
           />
-          <button type="submit">Найти</button>
 
-          {errors.Movie && <h2 className="error">Заполните все поля!</h2>}
-          {loading && <div className="LoadingIndicator"></div>}
-          {error && <h2>Не найдено подходящих результатов</h2>}
+          <SearchForm errors={errors} register={register} />
         </form>
 
-        {movies.length > 0 && (
-          <>
-            <h2 className="PageRouter">
-              Страница: <span>{page}</span>
-            </h2>
-            <div className="Navigator">
-              <button onClick={() => setPage((p) => Math.max(p - 1, 1))}>
-                prev
-              </button>
-              <button onClick={() => setPage((p) => Math.min(p + 1, 100))}>
-                next
-              </button>
-            </div>
-          </>
-        )}
+        <PageNavigator page={page} setPage={setPage} />
+        {error && <h2>Не найдено подходящих результатов</h2>}
+        {loading && <div className="LoadingIndicator"></div>}
 
         <div className={`MoviesShow ${animation}`}>
           {filteredMovies.map((val) => (

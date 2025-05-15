@@ -7,7 +7,6 @@ export const Header = () => {
   const [theme, setTheme] = useContext(MainContext);
   const ChangeTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
-    console.log(theme);
   };
 
   return (
@@ -20,7 +19,7 @@ export const Header = () => {
       </Link>
       <div className="centerSwitch">
         <label class="switch">
-          <input type="checkbox" onChange={ChangeTheme} id="themeToggle" />
+          <input type="checkbox" onChange={ChangeTheme} />
           <span class="slider"></span>
         </label>
       </div>

@@ -107,6 +107,26 @@ h2 {
   margin-bottom: 20px;
 }
 
+.Genres {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  justify-content: flex-start;
+}
+
+.genreBtn {
+  background-color: rgb(92, 92, 92);
+  border: none;
+
+  font-size: 14px;
+  margin: 10px;
+  padding: 10px;
+}
+
+.genreBtn:hover {
+  background-color: rgb(63, 63, 63);
+}
+
 .error {
   text-align: center;
 

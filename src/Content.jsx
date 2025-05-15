@@ -5,7 +5,6 @@ export const Content = ({ children }) => {
   const [theme] = useContext(MainContext);
 
   useEffect(() => {
-    console.log(theme);
     document.body.className = theme; // Применяет класс на body
   }, [theme]);
 

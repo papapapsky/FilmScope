@@ -12,9 +12,10 @@
   transform: translate(-50%);
 }
 
-@media (max-width: 620px) {
+@media (max-width: 670px) {
   .centerSwitch {
     position: initial;
+    margin-left: 30px;
   }
 }
 
