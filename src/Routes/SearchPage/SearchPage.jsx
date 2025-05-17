@@ -10,12 +10,15 @@ import { GenreTags } from "./searchComponents/GenreTags";
 import { FilterPanel } from "./searchComponents/FilterPanel";
 import { SearchForm } from "./searchComponents/SearchForm";
 import { PageNavigator } from "./PageNavigator";
+import { ModalInfo } from "./searchComponents/ModalWindow/ModalWindow";
 
 export const SearchPage = () => {
   const ApiKey = process.env.REACT_APP_OMDB_API_KEY;
   const inputYear = useInput();
 
   const [movies, setMovies] = useState([]);
+  const [currentId, setCurrentId] = useState("");
+  const [active, setActive] = useState("disable");
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [error, setError] = useState(false);
   const [typeFilter, setTypeFilter] = useState("all");
@@ -112,7 +115,6 @@ export const SearchPage = () => {
           fetchFullDetails(movie.imdbID)
         );
         const fullDetailsArray = await Promise.all(fullDetailsPromises);
-
         filteredList = fullDetailsArray.filter((data) => {
           if (!data.Genre) {
             return false;
@@ -133,6 +135,13 @@ export const SearchPage = () => {
 
   return (
     <>
+      <ModalInfo
+        title="asdasd"
+        active={active}
+        setActive={setActive}
+        currentId={currentId}
+        filteredMovies={filteredMovies}
+      />
       <ToTop />
       <div className="SearchPage">
         <form className="SearchBlock" onSubmit={handleSubmit(onSubmit)}>
@@ -152,7 +161,12 @@ export const SearchPage = () => {
 
         <div className={`MoviesShow ${animation}`}>
           {filteredMovies.map((val) => (
-            <MovieRender key={val.imdbID} val={val} />
+            <MovieRender
+              key={val.imdbID}
+              val={val}
+              setActive={setActive}
+              setCurrentId={setCurrentId}
+            />
           ))}
         </div>
       </div>

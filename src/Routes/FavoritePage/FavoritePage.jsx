@@ -6,6 +6,8 @@ export const FavoritePage = () => {
   const [favoriteMovies, setFavoriteMovies] = useState([]);
   const [animation, setAnimation] = useState("");
   const [count, setCount] = useState(localStorage.length);
+  const [currentId, setCurrentId] = useState("");
+  const [active, setActive] = useState("disable");
 
   useEffect(() => {
     setAnimation("AnimationsShowFavorite");
@@ -26,7 +28,12 @@ export const FavoritePage = () => {
       <div className={`${animation} MoviesShow`}>
         {favoriteMovies &&
           favoriteMovies.map((val) => (
-            <MovieRender key={val.imdbID} val={val} />
+            <MovieRender
+              key={val.imdbID}
+              val={val}
+              setActive={setActive}
+              setCurrentId={setCurrentId}
+            />
           ))}
         {favoriteMovies.length === 0 && (
           <h2 className="IfNotAdded">
