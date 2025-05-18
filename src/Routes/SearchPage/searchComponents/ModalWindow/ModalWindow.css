@@ -8,8 +8,8 @@
 }
 
 .ModalWindow {
-  background-color: rgb(49, 49, 49);
-
+  background-color: rgb(26, 26, 26);
+  max-width: 320px;
   position: absolute;
   padding: 20px;
   border: 2px solid #5c4b8a;
@@ -19,9 +19,29 @@
   transform: translate(-50%, -50%);
 }
 
+.toCenter {
+  margin: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+}
+
 .disable {
   transition: 0.3s;
   display: none;
+}
+
+.PosterDiv {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.MiniPoster {
+  margin: 0;
+  width: auto;
 }
 
 @keyframes openModal {

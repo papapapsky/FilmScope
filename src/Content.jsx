@@ -1,8 +1,9 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MainContext } from "./MainContext";
 
 export const Content = ({ children }) => {
-  const [theme] = useContext(MainContext);
+  const { themeState } = useContext(MainContext);
+  const [theme] = themeState;
 
   useEffect(() => {
     document.body.className = theme; // Применяет класс на body

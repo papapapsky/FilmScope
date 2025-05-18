@@ -1,10 +1,12 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { MainContext } from "../../MainContext";
 import "./header.css";
 
 export const Header = () => {
-  const [theme, setTheme] = useContext(MainContext);
+  const { themeState } = useContext(MainContext);
+  const [theme, setTheme] = themeState;
+
   const ChangeTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
@@ -18,9 +20,9 @@ export const Header = () => {
         Найти
       </Link>
       <div className="centerSwitch">
-        <label class="switch">
+        <label className="switch">
           <input type="checkbox" onChange={ChangeTheme} />
-          <span class="slider"></span>
+          <span className="slider"></span>
         </label>
       </div>
     </header>

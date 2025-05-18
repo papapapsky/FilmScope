@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useContext, useState, act } from "react";
 import { MovieRender } from "../MovieRender";
 import "./FavoritePage.css";
+import { MainContext } from "../../MainContext";
+import { ModalInfo } from "../SearchPage/searchComponents/ModalWindow/ModalWindow";
 
 export const FavoritePage = () => {
   const [favoriteMovies, setFavoriteMovies] = useState([]);
@@ -8,6 +10,11 @@ export const FavoritePage = () => {
   const [count, setCount] = useState(localStorage.length);
   const [currentId, setCurrentId] = useState("");
   const [active, setActive] = useState("disable");
+
+  const { modalMovieInfo } = useContext(MainContext);
+  const [modalInfo] = modalMovieInfo;
+
+  const [modalContent, setModalContent] = useState();
 
   useEffect(() => {
     setAnimation("AnimationsShowFavorite");
@@ -24,6 +31,7 @@ export const FavoritePage = () => {
 
   return (
     <>
+      <ModalInfo active={active} setActive={setActive} />
       <h1>Избранные фильмы</h1>
       <div className={`${animation} MoviesShow`}>
         {favoriteMovies &&

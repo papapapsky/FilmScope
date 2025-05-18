@@ -1,13 +1,18 @@
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import "./ModalWindow.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { FetchToMovies } from "../../../../Fetch/fetchToMovies";
+import { MainContext } from "../../../../MainContext";
+import { MovieInfo } from "../../../MovieDetails/MovieInfo";
 
 export const ModalInfo = ({ ...props }) => {
   const apiKey = process.env.REACT_APP_OMDB_API_KEY;
-  const [info, setInfo] = useState("");
-  const id = props.currentId;
+  const [loading, setLoading] = useState(false);
+  const { modalMovieInfo } = useContext(MainContext);
+  const [modalInfo] = modalMovieInfo;
+
+  const [modalContent, setModalContent] = useState();
 
   const disableModal = (event) => {
     if (event.target.id === "ModalBackground") {
@@ -16,16 +21,17 @@ export const ModalInfo = ({ ...props }) => {
   };
 
   useEffect(() => {
-    FetchToMovies(`http://www.omdbapi.com/?apikey=${apiKey}&i=${id}`).then(
-      (data) => {
-        setInfo(data);
-      }
-    );
-  }, [props.currentId]);
-
-  useEffect(() => {
-    console.log(info);
-  }, [info]);
+    if (modalInfo.length > 0) {
+      setLoading(true);
+      setModalContent();
+      FetchToMovies(
+        `http://www.omdbapi.com/?apikey=${apiKey}&i=${modalInfo}`
+      ).then((data) => {
+        setLoading(false);
+        setModalContent(data);
+      });
+    }
+  }, [modalInfo]);
 
   return createPortal(
     <div
@@ -33,36 +39,37 @@ export const ModalInfo = ({ ...props }) => {
       id="ModalBackground"
       onClick={(event) => disableModal(event)}
     >
-      <div className="ModalWindow">
-        {info && (
+      {loading && <div className="LoadingIndicator toCenter"></div>}
+      {modalContent && (
+        <div className="ModalWindow">
           <>
             <h2>
-              Краткая информация о фильме <span>{info.Title}</span>:
+              Информация о фильме <span>{modalContent.Title}</span>:
             </h2>
+            <div className="PosterDiv">
+              <img src={modalContent.Poster} alt="" className="MiniPoster" />
+            </div>
             <h4>
-              Год: <span>{info.Year}</span>
+              Тип: <span>{modalContent.Type}</span>
             </h4>
             <h4>
-              Тип: <span>{info.Type}</span>
+              Дата выхода: <span>{modalContent.Released}</span>
             </h4>
             <h4>
-              Оценка imdb: <span>{info.imdbRating}</span>
+              Языки: <span>{modalContent.Language}</span>
             </h4>
             <h4>
-              Продолжительность: <span>{info.Runtime}</span>
+              Жанры: <span>{modalContent.Genre}</span>
             </h4>
             <h4>
-              Язык: <span>{info.Language}</span>
+              Рейтинг по imdb: <span>{modalContent.imdbRating}</span>
             </h4>
-            <h4>
-              Всего сезонов: <span>{info.totalSeasons}</span>
-            </h4>
-            <Link to={`/movie/${id}`}>
-              <button>Нажмите для большей информации</button>
+            <Link to={`/movie/${modalContent.imdbID}`}>
+              <button>Посмотреть подробную информацию</button>
             </Link>
           </>
-        )}
-      </div>
+        </div>
+      )}
     </div>,
     document.getElementById("ModalWindow")
   );

@@ -2,8 +2,11 @@ import { createContext, useState } from "react";
 export const MainContext = createContext(null);
 
 export const MainContextProvider = ({ children }) => {
-  const themeState = useState("dark"); // [theme, setTheme]
+  const themeState = useState("dark");
+  const modalMovieInfo = useState("");
   return (
-    <MainContext.Provider value={themeState}>{children}</MainContext.Provider>
+    <MainContext.Provider value={{ themeState, modalMovieInfo }}>
+      {children}
+    </MainContext.Provider>
   );
 };
