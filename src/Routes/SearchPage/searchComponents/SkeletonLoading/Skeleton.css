@@ -1,0 +1,35 @@
+.skeletonBlock {
+  margin-top: 75px;
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.skeletonMovie {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 50px;
+
+  color: rgba(0, 0, 0, 0);
+  border-radius: 5px;
+  width: 350px;
+  background-color: #24242491;
+  border: 2px solid black;
+}
+
+.skeletonName {
+  margin: 20px auto;
+
+  background-color: rgb(44, 44, 44);
+  width: 70%;
+  border-radius: 7px;
+}
+
+.skeletonPoster {
+  width: 300px;
+  height: 500px;
+  border-radius: 7px;
+  background-color: rgb(44, 44, 44);
+}

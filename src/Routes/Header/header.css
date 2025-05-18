@@ -6,6 +6,29 @@
   margin-top: 25px;
 }
 
+header {
+  z-index: 3;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #181818;
+}
+
+#root {
+  margin-top: 100px;
+}
+
+.FavoritePage {
+  color: white;
+  background-color: #181818;
+}
+
+.FavoritePage:hover {
+  background-color: #000000d5;
+}
+
 .centerSwitch {
   position: absolute;
   left: 50%;

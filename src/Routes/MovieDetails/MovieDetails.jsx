@@ -54,14 +54,14 @@ export const MovieDetails = () => {
           <img className="Poster" src={findsMovie.Poster} alt="" />
           <h2>Общие сведения:</h2>
           <h2>
-            Описание:{" "}
-            <span style={{ fontSize: 16 }} className="DetailDesc">
+            Описание:
+            <h4 style={{ fontSize: 16 }} className="DetailDesc">
               {findsMovie.Plot}
-            </span>
+            </h4>
           </h2>
           <div className="WatchBlock">
             <h3>
-              Смотреть на:
+              <span className="Black">Смотреть на:</span>
               <a
                 target="_blank"
                 href={`https://www.imdb.com/title/${findsMovie.imdbID}`}

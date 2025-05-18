@@ -14,10 +14,10 @@ export const Header = () => {
   return (
     <header>
       <Link className="FavoritePage" to="/Favorite">
-        Избранное
+        <span>Избранное</span>
       </Link>
       <Link className="FavoritePage" to="/searchMovie">
-        Найти
+        <span>Найти</span>
       </Link>
       <div className="centerSwitch">
         <label className="switch">

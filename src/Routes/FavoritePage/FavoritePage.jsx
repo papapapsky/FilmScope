@@ -44,9 +44,9 @@ export const FavoritePage = () => {
             />
           ))}
         {favoriteMovies.length === 0 && (
-          <h2 className="IfNotAdded">
+          <h4 className="IfNotAdded">
             Пока что вы не добавили ничего в избранное...{" "}
-          </h2>
+          </h4>
         )}
       </div>
     </>

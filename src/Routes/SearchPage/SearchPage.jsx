@@ -1,4 +1,5 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
 import "./Searchpage.css";
 import { useForm } from "react-hook-form";
 import { FetchToMovies } from "../../Fetch/fetchToMovies";
@@ -11,9 +12,12 @@ import { FilterPanel } from "./searchComponents/FilterPanel";
 import { SearchForm } from "./searchComponents/SearchForm";
 import { PageNavigator } from "./PageNavigator";
 import { ModalInfo } from "./searchComponents/ModalWindow/ModalWindow";
-import { MainContext } from "../../MainContext";
+import { SkeletonLoading } from "./searchComponents/SkeletonLoading/SkeletonLoading";
 
 export const SearchPage = () => {
+  const scrollYRef = useRef(0);
+  const moviesContainerRef = useRef(null);
+
   const ApiKey = process.env.REACT_APP_OMDB_API_KEY;
   const inputYear = useInput();
 
@@ -97,9 +101,9 @@ export const SearchPage = () => {
 
   useEffect(() => {
     const applyFiltersAsync = async () => {
-      let filteredList = movies;
+      scrollYRef.current = window.scrollY;
 
-      filteredList = filteredList.filter((item) =>
+      let filteredList = movies.filter((item) =>
         MoviesFilter(item, typeFilter)
       );
 
@@ -111,27 +115,36 @@ export const SearchPage = () => {
 
       if (genres.length > 0 && filteredList.length > 0) {
         setAnimation("");
-        const fullDetailsPromises = filteredList.map((movie) =>
-          fetchFullDetails(movie.imdbID)
-        );
-        const fullDetailsArray = await Promise.all(fullDetailsPromises);
-        filteredList = fullDetailsArray.filter((data) => {
-          if (!data.Genre) {
-            return false;
-          }
-          return genres.every((genre) => {
-            setAnimation("AnimationsShow");
-            const movieGenres = data.Genre.split(", ").map((g) => g.trim());
 
-            return movieGenres.includes(genre);
-          });
+        const fullDetailsArray = await Promise.all(
+          filteredList.map((movie) => fetchFullDetails(movie.imdbID))
+        );
+
+        filteredList = fullDetailsArray.filter((data) => {
+          if (!data?.Genre) return false;
+          const movieGenres = data.Genre.split(", ").map((g) => g.trim());
+          return genres.every((genre) => movieGenres.includes(genre));
         });
+
+        setAnimation("AnimationsShow");
       }
+
       setFilteredMovies(filteredList);
     };
 
     applyFiltersAsync();
   }, [movies, genres, typeFilter, inputYear.value]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      window.scrollTo({
+        top: scrollYRef.current,
+        behavior: "auto",
+      });
+    }, 100);
+
+    return () => clearTimeout(timeout);
+  }, [filteredMovies]);
 
   return (
     <>
@@ -151,9 +164,9 @@ export const SearchPage = () => {
 
         <PageNavigator page={page} setPage={setPage} />
         {error && <h2>Не найдено подходящих результатов</h2>}
-        {loading && <div className="LoadingIndicator"></div>}
+        {loading && <SkeletonLoading />}
 
-        <div className={`MoviesShow ${animation}`}>
+        <div className={`MoviesShow ${animation}`} ref={moviesContainerRef}>
           {filteredMovies.map((val) => (
             <MovieRender val={val} setActive={setActive} key={val.imdbID} />
           ))}
