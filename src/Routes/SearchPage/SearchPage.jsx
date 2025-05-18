@@ -13,6 +13,7 @@ import { SearchForm } from "./searchComponents/SearchForm";
 import { PageNavigator } from "./PageNavigator";
 import { ModalInfo } from "./searchComponents/ModalWindow/ModalWindow";
 import { SkeletonLoading } from "./searchComponents/SkeletonLoading/SkeletonLoading";
+import { RussianDetect } from "./SearchTrubblesFix";
 
 export const SearchPage = () => {
   const scrollYRef = useRef(0);
@@ -51,6 +52,18 @@ export const SearchPage = () => {
 
   const fetchMovies = (name, pageNum = 1) => {
     if (!name) return;
+    const hasRussian = /[а-яё]/i;
+
+    if (hasRussian.test(name)) {
+      let Result = "";
+      const AdditionalTitle = name.split("");
+
+      for (let i = 0; i < AdditionalTitle.length; i++) {
+        const letterToSearch = AdditionalTitle[i];
+        Result += RussianDetect[letterToSearch];
+      }
+      name = Result;
+    }
 
     const url = `http://www.omdbapi.com/?apikey=${ApiKey}&page=${pageNum}&s=${encodeURIComponent(
       name
@@ -158,7 +171,6 @@ export const SearchPage = () => {
             handleTypeChange={handleTypeChange}
             handleGenreAdd={handleGenreAdd}
           />
-
           <SearchForm errors={errors} register={register} />
         </form>
 

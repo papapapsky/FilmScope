@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import { ApiKey } from "../SearchPage/SearchPage";
 import { useEffect, useRef, useState } from "react";
 import { FetchToMovies } from "../../Fetch/fetchToMovies";
 import { MovieInfo } from "./MovieInfo";
@@ -53,12 +52,10 @@ export const MovieDetails = () => {
           <h2> {findsMovie.Year}</h2>
           <img className="Poster" src={findsMovie.Poster} alt="" />
           <h2>Общие сведения:</h2>
-          <h2>
-            Описание:
-            <h4 style={{ fontSize: 16 }} className="DetailDesc">
-              {findsMovie.Plot}
-            </h4>
-          </h2>
+          <h2>Описание:</h2>
+          <h4 style={{ fontSize: 16 }} className="DetailDesc">
+            {findsMovie.Plot}
+          </h4>
           <div className="WatchBlock">
             <h3>
               <span className="Black">Смотреть на:</span>

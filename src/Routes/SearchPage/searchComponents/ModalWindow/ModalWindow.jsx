@@ -4,7 +4,6 @@ import "./ModalWindow.css";
 import { useEffect, useState, useContext } from "react";
 import { FetchToMovies } from "../../../../Fetch/fetchToMovies";
 import { MainContext } from "../../../../MainContext";
-import { MovieInfo } from "../../../MovieDetails/MovieInfo";
 
 export const ModalInfo = ({ ...props }) => {
   const apiKey = process.env.REACT_APP_OMDB_API_KEY;
@@ -35,6 +34,7 @@ export const ModalInfo = ({ ...props }) => {
 
   return createPortal(
     <div
+      open="open"
       className={`ModalBackground ${props.active}`}
       id="ModalBackground"
       onClick={(event) => disableModal(event)}

@@ -30,7 +30,7 @@ export const MovieInfo = ({ MovieInfo }) => {
         Рейтинги:{" "}
         <span className="DetailDesc">
           {MovieInfo.Ratings.map((val) => (
-            <div key={val.IMDbID}>
+            <div key={val.Source}>
               {val.Source} - {val.Value}
             </div>
           ))}
