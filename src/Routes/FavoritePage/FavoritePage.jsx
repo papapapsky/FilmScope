@@ -21,14 +21,17 @@ export const FavoritePage = () => {
   }, []);
 
   useEffect(() => {
-    if (count > 0) {
-      const key = localStorage.key(count - 1);
+    const favorites = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
       const value = localStorage.getItem(key);
-      setFavoriteMovies([...favoriteMovies, JSON.parse(value)]);
-      setCount(count - 1);
+      try {
+        const movie = JSON.parse(value);
+        if (movie.imdbID) favorites.push(movie);
+      } catch (e) {}
     }
-  }, [count]);
-
+    setFavoriteMovies(favorites);
+  }, []);
   return (
     <>
       <ModalInfo active={active} setActive={setActive} />

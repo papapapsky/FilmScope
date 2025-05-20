@@ -15,7 +15,12 @@ export const MovieRender = ({ val, setActive }) => {
   };
 
   return (
-    <Link className="MoviePoster" key={val.imdbID} to={`/movie/${val.imdbID}`}>
+    <Link
+      className="MoviePoster"
+      key={val.imdbID}
+      to={`/movie/${val.imdbID}`}
+      id={val.imdbID}
+    >
       <h2>{val.Title}</h2>
       <img src={val.Poster} alt="" />
       <h3>Год - {val.Year}</h3>

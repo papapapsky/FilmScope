@@ -22,6 +22,62 @@
   }
 }
 
+.DetailsLoading {
+  margin: 0;
+}
+
+hr {
+  margin: 0;
+  border: 1px solid rgba(255, 255, 255, 0.438);
+  height: 0px;
+  width: 100%;
+}
+
+.miniPoster {
+  border: 2px solid #5c4b8a;
+  width: 50px;
+  height: 60px;
+}
+
+.coincidencesMenu {
+  position: absolute;
+  top: -70px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999; /* достаточно высокий, чтобы быть сверху */
+
+  padding: 10px 20%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  background-color: #1f1f1f;
+  border-bottom-right-radius: 7px;
+  border-bottom-left-radius: 7px;
+  border-top: none;
+  border-bottom: 2px solid #5c4b8a;
+  border-right: 2px solid #5c4b8a;
+  border-left: 2px solid #5c4b8a;
+  box-shadow: 0px 10px 35px 10px black;
+}
+.focus {
+  display: flex;
+}
+
+.blur {
+  display: none;
+}
+
+.coincidencesElem {
+  width: 250px;
+  margin: 10px;
+  align-items: center;
+  background-color: #252525;
+  border: 2px solid #977be6;
+  display: flex;
+}
+
 .AnimationsRemove {
   animation: RemoveElem 0.3s ease-out forwards;
 }
@@ -223,7 +279,7 @@ img {
 
 h3 {
   color: white;
-  margin: 10px 0px 10px 0;
+  margin: 10px;
 
   text-align: center;
 }

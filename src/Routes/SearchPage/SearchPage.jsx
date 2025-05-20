@@ -14,9 +14,9 @@ import { PageNavigator } from "./PageNavigator";
 import { ModalInfo } from "./searchComponents/ModalWindow/ModalWindow";
 import { SkeletonLoading } from "./searchComponents/SkeletonLoading/SkeletonLoading";
 import { RussianDetect } from "./SearchTrubblesFix";
+import { FilteredMoviesHandler } from "./searchComponents/LazyLoading/FiltreMovies";
 
 export const SearchPage = () => {
-  const scrollYRef = useRef(0);
   const moviesContainerRef = useRef(null);
 
   const ApiKey = process.env.REACT_APP_OMDB_API_KEY;
@@ -29,9 +29,11 @@ export const SearchPage = () => {
   const [typeFilter, setTypeFilter] = useState("all");
   const [genres, setGenres] = useState([]);
 
+  const [renderNewMovies, setRenderNewMovies] = useState();
   const [page, setPage] = useState(1);
   const [animation, setAnimation] = useState("");
   const [loading, setLoading] = useState(false);
+  const [windowPos, setWindowPos] = useState();
 
   const {
     register,
@@ -41,6 +43,7 @@ export const SearchPage = () => {
   } = useForm();
 
   const movieName = watch("Movie");
+  const [currentMovieName, setCurrentMovieName] = useState("");
 
   useEffect(() => {
     if (movies.length > 0) {
@@ -63,14 +66,16 @@ export const SearchPage = () => {
         Result += RussianDetect[letterToSearch];
       }
       name = Result;
+      setCurrentMovieName(Result);
     }
+    setCurrentMovieName(name);
 
     const url = `http://www.omdbapi.com/?apikey=${ApiKey}&page=${pageNum}&s=${encodeURIComponent(
       name
     )}`;
+    setMovies([]);
     setLoading(true);
     setError(false);
-    setMovies([]);
 
     FetchToMovies(url).then((movie) => {
       setAnimation("AnimationsShow");
@@ -113,57 +118,68 @@ export const SearchPage = () => {
   };
 
   useEffect(() => {
-    const applyFiltersAsync = async () => {
-      scrollYRef.current = window.scrollY;
+    if (filteredMovies.length > 0) {
+      const handleScroll = () => {
+        const threshold = 100;
+        const scrollY = window.scrollY || document.documentElement.scrollTop;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
 
-      let filteredList = movies.filter((item) =>
-        MoviesFilter(item, typeFilter)
-      );
+        if (scrollY + windowHeight >= documentHeight - threshold) {
+          setRenderNewMovies(true);
+        }
+      };
 
-      if (inputYear.value) {
-        filteredList = filteredList.filter(
-          (item) => item.Year === inputYear.value
-        );
-      }
+      handleScroll();
 
-      if (genres.length > 0 && filteredList.length > 0) {
-        setAnimation("");
-
-        const fullDetailsArray = await Promise.all(
-          filteredList.map((movie) => fetchFullDetails(movie.imdbID))
-        );
-
-        filteredList = fullDetailsArray.filter((data) => {
-          if (!data?.Genre) return false;
-          const movieGenres = data.Genre.split(", ").map((g) => g.trim());
-          return genres.every((genre) => movieGenres.includes(genre));
-        });
-
-        setAnimation("AnimationsShow");
-      }
-
-      setFilteredMovies(filteredList);
-    };
-
-    applyFiltersAsync();
-  }, [movies, genres, typeFilter, inputYear.value]);
+      window.addEventListener("scroll", handleScroll);
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+      };
+    }
+  }, [filteredMovies]);
+  const [illusionPage, setIllusionPage] = useState(page);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      window.scrollTo({
-        top: scrollYRef.current,
-        behavior: "auto",
-      });
-    }, 100);
+    if (renderNewMovies) {
+      setIllusionPage(illusionPage + 1);
+    }
+  }, [renderNewMovies]);
 
-    return () => clearTimeout(timeout);
-  }, [filteredMovies]);
+  useEffect(() => {
+    if (illusionPage > 1) {
+      const nextIllusionPage = illusionPage;
+      setLoading(true);
+      FetchToMovies(
+        `http://www.omdbapi.com/?apikey=${ApiKey}&s=${currentMovieName}&page=${nextIllusionPage}`
+      ).then((data) => {
+        if (data.Search) {
+          setMovies([...movies.concat(data.Search)]);
+          setRenderNewMovies(false);
+        }
+        setLoading(false);
+      });
+    }
+  }, [illusionPage]);
 
   return (
     <>
       <ModalInfo active={active} setActive={setActive} />
       <ToTop />
       <div className="SearchPage">
+        <FilteredMoviesHandler
+          movies={movies}
+          genres={genres}
+          typeFilter={typeFilter}
+          inputYear={inputYear}
+          fetchFullDetails={fetchFullDetails}
+          setFilteredMovies={setFilteredMovies}
+          setAnimation={setAnimation}
+          windowPos={windowPos}
+          setWindowPos={setWindowPos}
+          MoviesFilter={MoviesFilter}
+        />
+
         <form className="SearchBlock" onSubmit={handleSubmit(onSubmit)}>
           <GenreTags genres={genres} handleGenreRemove={handleGenreRemove} />
           <FilterPanel
@@ -171,7 +187,11 @@ export const SearchPage = () => {
             handleTypeChange={handleTypeChange}
             handleGenreAdd={handleGenreAdd}
           />
-          <SearchForm errors={errors} register={register} />
+          <SearchForm
+            movieName={movieName}
+            errors={errors}
+            register={register}
+          />
         </form>
 
         <PageNavigator page={page} setPage={setPage} />
