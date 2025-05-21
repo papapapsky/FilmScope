@@ -120,7 +120,7 @@ export const SearchPage = () => {
   useEffect(() => {
     if (filteredMovies.length > 0) {
       const handleScroll = () => {
-        const threshold = 100;
+        const threshold = 1;
         const scrollY = window.scrollY || document.documentElement.scrollTop;
         const windowHeight = window.innerHeight;
         const documentHeight = document.documentElement.scrollHeight;
@@ -149,7 +149,6 @@ export const SearchPage = () => {
   useEffect(() => {
     if (illusionPage > 1) {
       const nextIllusionPage = illusionPage;
-      setLoading(true);
       FetchToMovies(
         `http://www.omdbapi.com/?apikey=${ApiKey}&s=${currentMovieName}&page=${nextIllusionPage}`
       ).then((data) => {
@@ -157,7 +156,6 @@ export const SearchPage = () => {
           setMovies([...movies.concat(data.Search)]);
           setRenderNewMovies(false);
         }
-        setLoading(false);
       });
     }
   }, [illusionPage]);

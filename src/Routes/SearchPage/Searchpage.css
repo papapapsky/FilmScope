@@ -270,6 +270,14 @@ img {
   }
 }
 
+.lazyIndicator {
+  position: absolute;
+  top: 95%;
+  left: 50%;
+  transform: translate(-95%, -50%);
+  margin-bottom: 20px;
+}
+
 .FilterBlock {
   margin: 20px;
   display: flex;

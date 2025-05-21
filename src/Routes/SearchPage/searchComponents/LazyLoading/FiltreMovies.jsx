@@ -45,7 +45,7 @@ export const FilteredMoviesHandler = ({
 
       setTimeout(() => {
         window.scrollTo({ top: window.scrollY, behavior: "smooth" });
-      }, 100);
+      }, 10);
     };
 
     applyFiltersAsync();
