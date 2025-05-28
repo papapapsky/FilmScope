@@ -5,7 +5,7 @@ import { MovieInfo } from "./MovieInfo";
 import "./MovieDetails.css";
 
 export const MovieDetails = () => {
-  const apiKey = process.env.REACT_APP_OMDB_API_KEY;
+  const apiKey = 'e884f9fc';
   const [loading, setLoading] = useState();
   const [findsMovie, setFindsMovie] = useState();
   const [favoriteState, setFavoriteState] = useState("AddToFavorites");

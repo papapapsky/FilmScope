@@ -6,7 +6,7 @@ import { FetchToMovies } from "../../../../Fetch/fetchToMovies";
 import { MainContext } from "../../../../MainContext";
 
 export const ModalInfo = ({ ...props }) => {
-  const apiKey = process.env.REACT_APP_OMDB_API_KEY;
+  const apiKey = 'e884f9fc';
   const [loading, setLoading] = useState(false);
   const { modalMovieInfo } = useContext(MainContext);
   const [modalInfo] = modalMovieInfo;

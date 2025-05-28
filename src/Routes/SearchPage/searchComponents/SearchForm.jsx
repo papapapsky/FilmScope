@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FetchToMovies } from "../../../Fetch/fetchToMovies";
 import { RussianDetect } from "../SearchTrubblesFix";
 import { Link } from "react-router-dom";
@@ -9,35 +9,36 @@ export const SearchForm = ({ register, errors, movieName }) => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const apiKey = process.env.REACT_APP_OMDB_API_KEY;
+  const timer = useRef(null)
+  const apiKey = 'e884f9fc';
+
   useEffect(() => {
     if (movieName !== "") {
-      if (!movieName) return;
       const hasRussian = /[а-яё]/i;
 
+      let translatedName = movieName;
       if (hasRussian.test(movieName)) {
-        let Result = "";
-        const AdditionalTitle = movieName.split("");
-
-        for (let i = 0; i < AdditionalTitle.length; i++) {
-          const letterToSearch = AdditionalTitle[i];
-          Result += RussianDetect[letterToSearch];
-        }
-        movieName = Result;
+        translatedName = movieName.split("").map(char => RussianDetect[char] || char).join("");
       }
+
       setBlur("focus");
       setLoading(true);
-      FetchToMovies(
-        `http://www.omdbapi.com/?apikey=${apiKey}&s=${movieName}`
-      ).then((data) => {
-        if (data.Search) {
-          setMovies(data.Search);
-        }
-        setLoading(false);
-      });
+
+      timer.current = setTimeout(() => {
+        FetchToMovies(
+          `http://www.omdbapi.com/?apikey=${apiKey}&s=${translatedName}`
+        ).then((data) => {
+          if (data.Search) {
+            setMovies(data.Search);
+          }
+          setLoading(false);
+        });
+      }, 1000);
     } else {
       setBlur("blur");
     }
+    
+    return () => clearTimeout(timer.current)
   }, [movieName]);
 
   return (

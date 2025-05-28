@@ -19,7 +19,7 @@ import { FilteredMoviesHandler } from "./searchComponents/LazyLoading/FiltreMovi
 export const SearchPage = () => {
   const moviesContainerRef = useRef(null);
 
-  const ApiKey = process.env.REACT_APP_OMDB_API_KEY;
+  const ApiKey = 'e884f9fc';
   const inputYear = useInput();
 
   const [movies, setMovies] = useState([]);
@@ -69,7 +69,7 @@ export const SearchPage = () => {
       setCurrentMovieName(Result);
     }
     setCurrentMovieName(name);
-
+    console.log(ApiKey)
     const url = `http://www.omdbapi.com/?apikey=${ApiKey}&page=${pageNum}&s=${encodeURIComponent(
       name
     )}`;
